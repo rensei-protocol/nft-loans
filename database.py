@@ -84,6 +84,28 @@ ARCADE_LOANS_SCHEMA = """CREATE TABLE arcade_loans (
     interest_rate text
 );"""
 
+NFTFI_LOANS_SCHEMA = """CREATE TABLE nftfi_loans (
+    loan_id int PRIMARY KEY,
+    block_time timestamp,
+    block_number text,
+    borrower text,
+    lender text,
+    loan_principal_amount text,
+    maximum_repayment_amount text,
+    nft_collateral_id text,
+    loan_erc20_denomination text,
+    loan_duration text,
+    loan_interest_rate_for_duration_in_basis_points int,
+    loan_admin_fee_in_basic_points int,
+    loan_start_time timestamp,
+    nft_collateral_contract text,
+    revenue_share_partner text,
+    revenue_share_in_basis_points text,
+    referral_fee_in_basis_points text,
+    transaction_hash text
+);
+"""
+
 
 def connect():
     return MySQLdb.connect(
@@ -182,3 +204,17 @@ def insert_into_arcade_loans(values):
     print(f"Inserted {len(values)} rows")
     cur.close()
     conn.close()
+
+def insert_into_nftfi_loans(values):
+    conn = connect()
+    cur = conn.cursor()
+    try:
+        cur.executemany("INSERT INTO nftfi_loans (loan_id, block_time, block_number, borrower, lender, loan_principal_amount, maximum_repayment_amount, nft_collateral_id, loan_erc20_denomination, loan_duration, loan_interest_rate_for_duration_in_basis_points, loan_admin_fee_in_basic_points, loan_start_time, nft_collateral_contract, revenue_share_partner, revenue_share_in_basis_points, referral_fee_in_basis_points, transaction_hash) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE loan_id=VALUES(loan_id), block_time=VALUES(block_time), block_number=VALUES(block_number), borrower=VALUES(borrower), lender=VALUES(lender), loan_principal_amount=VALUES(loan_principal_amount), maximum_repayment_amount=VALUES(maximum_repayment_amount), nft_collateral_id=VALUES(nft_collateral_id), loan_erc20_denomination=VALUES(loan_erc20_denomination), loan_duration=VALUES(loan_duration), loan_interest_rate_for_duration_in_basis_points=VALUES(loan_interest_rate_for_duration_in_basis_points), loan_admin_fee_in_basic_points=VALUES(loan_admin_fee_in_basic_points), loan_start_time=VALUES(loan_start_time), nft_collateral_contract=VALUES(nft_collateral_contract), revenue_share_partner=VALUES(revenue_share_partner), revenue_share_in_basis_points=VALUES(revenue_share_in_basis_points), referral_fee_in_basis_points=VALUES(referral_fee_in_basis_points), transaction_hash=VALUES(transaction_hash)", values)
+    except Exception as e:
+        print("failed to insert", e)
+
+    conn.commit()
+    print(f"Inserted {len(values)} rows")
+    cur.close()
+    conn.close()
+
