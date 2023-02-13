@@ -1,0 +1,16 @@
+[MASTER]
+load-plugins=pylint_django
+
+[MESSAGES CONTROL]
+disable=
+    # ... disable default Pylint messages ...
+    invalid-name,
+    too-few-public-methods,
+    too-many-arguments,
+    too-many-instance-attributes,
+
+[FORMAT]
+max-line-length=120
+
+[META-VARIABLES]
+DJANGO_SETTINGS_MODULE=nft_loans.settings
