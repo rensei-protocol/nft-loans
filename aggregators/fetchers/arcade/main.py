@@ -50,7 +50,7 @@ class ArcadeFetcher(BaseFetcher):
 			timeout=5
 		)
 
-		print(result.json())
+
 		res = result.json()['data']['loans']
 		return [
 			ArcadeLoan(
