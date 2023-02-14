@@ -20,3 +20,9 @@ from aggregators.fetchers.arcade.main import ArcadeFetcher
 
 fetcher = ArcadeFetcher()
 fetcher.handle()
+
+# benddao
+from aggregators.fetchers.benddao.main import BenddaoFetcher
+
+fetcher = BenddaoFetcher()
+fetcher.handle()
