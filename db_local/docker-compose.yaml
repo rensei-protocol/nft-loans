@@ -1,16 +1,14 @@
 version: '3.3'
 services:
-  db:
-    image: mysql/mysql-server:8.0
+  db_postgres:
+    image: kartoza/postgis:13-3.1
     restart: always
-    environment:
-      MYSQL_DATABASE: ${DB_NAME}
-      # So you don't have to use root, but you can if you like
-      MYSQL_USER: ${DB_USER}
-      # You can use whatever password you like
-      MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
-      # <Port exposed> : < MySQL Port running inside container>
-      - '3306:3306'
+      - "${DB_PORT}:5432"
     volumes:
-      - ./mysql:/var/lib/mysql
+      - ./postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASS: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_NAME}
+      ALLOW_IP_RANGE: 0.0.0.0/0

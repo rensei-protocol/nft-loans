@@ -1,5 +1,6 @@
 import requests
 from django.utils.timezone import datetime
+
 from aggregators.fetchers.base import BaseFetcher
 from aggregators.models import BenddaoLiquidate, BenddaoBorrow, BenddaoRedeem
 from nft_loans.configs.logger import logger
@@ -10,14 +11,12 @@ class BenddaoFetcher(BaseFetcher):
 
     def get_liquidations(self, counter):
         """Gets loans up to 1000 results"""
-        query = """
-	    query ($skipAmount: Int) {
+        query = f"""
+	    query ($skipAmount: Int) {{
 	        liquidates (
-	            orderBy: blockNumber,
-	            orderDirection: desc,
-	            first: 1000,
+	            {self.get_common_conditions(model=BenddaoLiquidate)}
 	            skip: $skipAmount
-	        ) {
+	        ) {{
 				borrower
 				id
 				nftAsset
@@ -30,8 +29,8 @@ class BenddaoFetcher(BaseFetcher):
 				reserve
 				repayAmount
 				remainAmount
-	        }
-	    }
+	        }}
+	    }}
 	    """
 
         variables = {"skipAmount": counter}
@@ -62,14 +61,12 @@ class BenddaoFetcher(BaseFetcher):
 
     def get_borrows(self, counter):
         """Gets loans up to 1000 results"""
-        query = """
-	    query ($skipAmount: Int) {
+        query = f"""
+	    query ($skipAmount: Int) {{
 	        borrows (
-	            orderBy: blockNumber,
-	            orderDirection: desc,
-	            first: 1000,
+	            {self.get_common_conditions(model=BenddaoBorrow)}
 	            skip: $skipAmount
-	        ) {
+	        ) {{
 				amount
 			    blockNumber
 			    blockTimestamp
@@ -83,8 +80,8 @@ class BenddaoFetcher(BaseFetcher):
 			    reserve
 			    transactionHash
 			    user
-	        }
-	    }
+	        }}
+	    }}
 	    """
 
         variables = {"skipAmount": counter}
@@ -121,14 +118,12 @@ class BenddaoFetcher(BaseFetcher):
 
     def get_redeems(self, counter):
         """Gets loans up to 1000 results"""
-        query = """
-	    query ($skipAmount: Int) {
+        query = f"""
+	    query ($skipAmount: Int) {{
 	        redeems (
-	            orderBy: blockNumber,
-	            orderDirection: desc,
-	            first: 1000,
+	            {self.get_common_conditions(model=BenddaoRedeem)}
 	            skip: $skipAmount
-	        ) {
+	        ) {{
 				    blockNumber
 				    blockTimestamp
 				    borrowAmount
@@ -141,8 +136,8 @@ class BenddaoFetcher(BaseFetcher):
 				    reserve
 				    transactionHash
 				    user
-	        }
-	    }
+	        }}
+	    }}
 	    """
 
         variables = {"skipAmount": counter}

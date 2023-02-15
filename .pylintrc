@@ -12,6 +12,7 @@ disable=
     missing-docstring,
     logging-fstring-interpolation,
     broad-exception-caught,
+    invalid-envvar-default,
 
 [FORMAT]
 max-line-length=120

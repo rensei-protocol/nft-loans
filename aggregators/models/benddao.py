@@ -3,7 +3,7 @@ from django.db import models
 
 class BenddaoBorrow(models.Model):
     id = models.CharField(max_length=100, primary_key=True)
-    block_number = models.IntegerField()
+    block_number = models.IntegerField(blank=True, null=True, db_index=True)
     loan_id = models.IntegerField()
     user = models.TextField()
     on_behalf_of = models.TextField(blank=True, null=True)
@@ -19,7 +19,7 @@ class BenddaoBorrow(models.Model):
 
 class BenddaoLiquidate(models.Model):
     id = models.CharField(max_length=100, primary_key=True)
-    block_number = models.IntegerField()
+    block_number = models.IntegerField(blank=True, null=True, db_index=True)
     block_timestamp = models.DateTimeField(blank=True, null=True)
     borrower = models.TextField()
     loan_id = models.IntegerField()
@@ -34,7 +34,7 @@ class BenddaoLiquidate(models.Model):
 
 class BenddaoRedeem(models.Model):
     id = models.CharField(max_length=100, primary_key=True)
-    block_number = models.IntegerField()
+    block_number = models.IntegerField(blank=True, null=True, db_index=True)
     block_timestamp = models.DateTimeField(blank=True, null=True)
     borrow_amount = models.TextField()
     borrower = models.TextField()

@@ -2,12 +2,10 @@ import requests
 
 # from django.utils.datetime_safe import datetime
 from django.utils.timezone import datetime
+
 from aggregators.fetchers.base import BaseFetcher
 from aggregators.models import (
     X2Y2Loan,
-    X2Y2NonceCancelled,
-    X2Y2Repaid,
-    X2Y2Liquidation,
     ArcadeLoan,
 )
 
@@ -18,14 +16,12 @@ class ArcadeFetcher(BaseFetcher):
 
     def get_loans(self, counter):
         """Gets loans up to 1000 results"""
-        query = """
-	    query ($skipAmount: Int) {
+        query = f"""
+	    query ($skipAmount: Int) {{
 	        loans (
-	            orderBy: blockNumber,
-	            orderDirection: desc,
-	            first: 1000,
+	            {self.get_common_conditions(model=ArcadeLoan)}
 	            skip: $skipAmount
-	        ) {
+	        ) {{
 	            balance
 	            balancePaid
 	            blockNumber
@@ -46,8 +42,8 @@ class ArcadeFetcher(BaseFetcher):
 	            state
 	            timestamp
 	            txhash
-	        }
-	    }
+	        }}
+	    }}
 	    """
 
         variables = {"skipAmount": counter}

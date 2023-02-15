@@ -10,14 +10,12 @@ class NftfiFetcher(BaseFetcher):
 
     def get_loans(self, counter):
         """Gets loans up to 1000 results"""
-        query = """
-		    query ($skipAmount: Int) {
+        query = f"""
+		    query ($skipAmount: Int) {{
 		        loanStarteds(
-		            orderBy: blockNumber,
-		            orderDirection: desc,
-		            first: 1000,
+	                {self.get_common_conditions(model=NftfiLoan)}
 		            skip: $skipAmount
-		        ) {
+		        ) {{
 		            id
 		            loanId
 		            borrower
@@ -39,8 +37,8 @@ class NftfiFetcher(BaseFetcher):
 		            blockNumber
 		            blockTimestamp
 		            transactionHash
-		        }
-		    }
+		        }}
+		    }}
 		    """
         variables = {"skipAmount": counter}
         result = requests.post(

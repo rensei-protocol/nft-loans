@@ -12,14 +12,12 @@ class X2Y2Fetcher(BaseFetcher):
 
     def get_loans(self, counter):
         """Gets loans up to 1000 results"""
-        query = """
-		    query ($skipAmount: Int) {
+        query = f"""
+		    query ($skipAmount: Int) {{
 		        loanStarteds (
-		            orderBy: blockTimestamp,
-		            orderDirection: desc,
-		            first: 1000,
+	                {self.get_common_conditions(model=X2Y2Loan)}
 		            skip: $skipAmount
-		        ) {
+		        ) {{
 		            blockTimestamp
 		            blockNumber
 		            borrower
@@ -38,8 +36,8 @@ class X2Y2Fetcher(BaseFetcher):
 		            loanId
 		            transactionHash
 		            nonce
-		        }
-		    }
+		        }}
+		    }}
 		    """
 
         variables = {"skipAmount": counter}
@@ -77,14 +75,12 @@ class X2Y2Fetcher(BaseFetcher):
 
     def get_repaids(self, counter):
         """Gets loans repaid up to 1000 results"""
-        query = """
-	    query ($skipAmount: Int) {
+        query = f"""
+	    query ($skipAmount: Int) {{
 	        loanRepaids (
-	            orderBy: blockTimestamp,
-	            orderDirection: desc,
-	            first: 1000,
+	            {self.get_common_conditions(model=X2Y2Repaid)}
 	            skip: $skipAmount
-	        ) {
+	        ) {{
 	            loanId
 	            blockTimestamp
 	            blockNumber
@@ -97,8 +93,8 @@ class X2Y2Fetcher(BaseFetcher):
 	            nftTokenId
 	            transactionHash
 	            adminFee
-	        }
-	    }
+	        }}
+	    }}
 	    """
 
         variables = {"skipAmount": counter}
@@ -129,14 +125,12 @@ class X2Y2Fetcher(BaseFetcher):
 
     def get_liquidations(self, counter):
         """Gets loan liquidations up to 1000 results"""
-        query = """
-	    query ($skipAmount: Int) {
+        query = f"""
+	    query ($skipAmount: Int) {{
 	        loanLiquidateds (
-	            orderBy: blockTimestamp,
-	            orderDirection: desc,
-	            first: 1000,
+	            {self.get_common_conditions(model=X2Y2Liquidation)}
 	            skip: $skipAmount
-	        ) {
+	        ) {{
 	            loanId
 	            blockTimestamp
 	            blockNumber
@@ -148,8 +142,8 @@ class X2Y2Fetcher(BaseFetcher):
 	            loanLiquidationDate
 	            loanMaturityDate
 	            transactionHash
-	        }
-	    }
+	        }}
+	    }}
 	    """
 
         variables = {"skipAmount": counter}
@@ -183,21 +177,19 @@ class X2Y2Fetcher(BaseFetcher):
 
     def get_nonce_cancelleds(self, counter):
         """Gets nonce cancelled up to 1000 results"""
-        query = """
-	    query ($skipAmount: Int) {
+        query = f"""
+	    query ($skipAmount: Int) {{
 	        nonceCancelleds (
-	            orderBy: blockTimestamp,
-	            orderDirection: desc,
-	            first: 1000,
+	            {self.get_common_conditions(model=X2Y2NonceCancelled)}
 	            skip: $skipAmount
-	        ) {
+	        ) {{
 	            lender
 	            nonce
 	            blockNumber
 	            blockTimestamp
 	            transactionHash
-	        }
-	    }
+	        }}
+	    }}
 	    """
 
         variables = {"skipAmount": counter}

@@ -6,3 +6,9 @@ run_redis_bg:
 
 pre_commit_hooks:
 	pre-commit run --all-files
+
+run_celery_beat:
+	celery -A nft_loans beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+
+run_celery_worker:
+	celery -A nft_loans worker --queues=nft_loans_queue -l INFO

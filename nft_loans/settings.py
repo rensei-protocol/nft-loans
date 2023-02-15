@@ -14,7 +14,6 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,13 +24,44 @@ for dotenv_file in [f".env.{DJANGO_ENV}", f".env.{DJANGO_ENV}.local"]:
     dotenv_file = "nft_loans/configs/" + dotenv_file
     load_dotenv(os.path.join(BASE_DIR, dotenv_file))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
+# Redis settings
+REDIS_HOST = os.getenv("REDIS_HOST_NAME") or "localhost"
+REDIS_PORT = os.getenv("REDIS_PORT")
+REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
+
+BROKER_HEARTBEAT = 0
+BROKER_POOL_LIMIT = None
+# BROKER_TRANSPORT_OPTIONS = {'confirm_publish': True}
+BROKER_CONNECTION_TIMEOUT = 30
+BROKER_CONNECTION_RETRY = True
+BROKER_CONNECTION_MAX_RETRIES = 20
+
+# Celery settings
+CELERY_BROKER_URL = f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}"
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_CACHE_BACKEND = "default"
+CELERY_TIMEZONE = "UTC"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+
+CELERY_TASK_ACKS_LATE = False
+CELERY_TASK_QUEUE_MAX_PRIORITY = 10
+CELERY_CREATE_MISSING_QUEUES = True
+CELERY_TASK_REMOTE_TRACEBACKS = True
+CELERY_TASK_DEFAULT_QUEUE = "nft_loans_queue"
+CELERY_TASK_RESULT_EXPIRES = 86400
+CELERY_RESULT_EXPIRES = 86400
+CELERY_ENABLE_UTC = False
+CELERY_USE_TZ = False
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-elhi_*ia$6ur$wwh0$e43)%xras7u#y_ik$i7s4_*pu7bh7!o#"
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -46,6 +76,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # 3rd party apps
+    "django_celery_results",
+    "django_celery_beat",
     # custom apps
     "aggregators.apps.AggregatorsConfig",
 ]
@@ -86,13 +119,13 @@ WSGI_APPLICATION = "nft_loans.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("DB_NAME"),
         "USER": os.getenv("DB_USERNAME"),
         "PASSWORD": os.getenv("DB_PASSWORD"),
         "HOST": os.getenv("DB_HOST"),
         "PORT": os.getenv("DB_PORT"),
-    }
+    },
 }
 
 
@@ -156,4 +189,12 @@ LOGGING = {
             "propagate": False,
         },
     },
+}
+
+# django setting.
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "my_cache_table",
+    }
 }
