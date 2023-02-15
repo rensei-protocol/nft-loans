@@ -8,7 +8,10 @@
 ## Conventions:
 - create app names in plural form
 - use only single scope for strings: `'` not `"`
+- add libs via poetry: `poetry add <package_name>`
 
+> User `poetry` to add/remove any package from project.
+> It will help to find the best suitable library and avoid inconsisteny in the future
 
 ### Before migrations, must todo:
 1. create  migration file, it is very important to run it with app name (otherwise will run globally), e.g: `./manage.py makemigrations app_name`

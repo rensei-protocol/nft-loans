@@ -1,14 +1,33 @@
 version: '3.3'
 services:
-  db:
-    image: mysql
-    restart: always
+
+  redis:
+    image: arm64v8/redis:6.2.7
+    container_name: ${REDIS_HOST_NAME}
     environment:
-      MYSQL_DATABASE: 'db'
-      MYSQL_USER: 'user'
-      MYSQL_PASSWORD: 'password'
-      MYSQL_ROOT_PASSWORD: 'password'
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      # hardcoded port, in .env.dev need to configure between master and slave only
+      - REDIS_PORT_NUMBER=6379
     ports:
-      - '3306:3306'
-    expose:
-      - '3306'
+      - '${REDIS_PORT}:6379'
+    volumes:
+      - ./redis_data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+
+  redis-slave:
+    image: arm64v8/redis:6.2.7
+    container_name: ${REDIS_HOST_NAME}_SLAVE
+    depends_on:
+      - redis
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis
+      - REDIS_MASTER_PORT_NUMBER=6379
+      - REDIS_MASTER_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      # only need to run 1 slave node, otherwise port clashing will happen
+      - '6377:6379'

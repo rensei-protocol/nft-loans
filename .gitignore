@@ -132,3 +132,4 @@ dmypy.json
 .idea
 .vscode
 /nft_loans/configs/.env.dev.local
+/redis_data/
