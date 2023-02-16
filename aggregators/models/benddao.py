@@ -13,14 +13,14 @@ class BenddaoBorrow(models.Model):
     reserve = models.TextField(blank=True, null=True)
     referral = models.IntegerField(blank=True, null=True)
     borrow_rate = models.TextField(blank=True, null=True)
-    block_timestamp = models.DateTimeField(blank=True, null=True)
+    block_time = models.DateTimeField(blank=True, null=True)
     amount = models.TextField()
 
 
 class BenddaoLiquidate(models.Model):
     id = models.CharField(max_length=100, primary_key=True)
     block_number = models.IntegerField(blank=True, null=True, db_index=True)
-    block_timestamp = models.DateTimeField(blank=True, null=True)
+    block_time = models.DateTimeField(blank=True, null=True)
     borrower = models.TextField()
     loan_id = models.IntegerField()
     nft_asset = models.CharField(max_length=100)
@@ -35,7 +35,7 @@ class BenddaoLiquidate(models.Model):
 class BenddaoRedeem(models.Model):
     id = models.CharField(max_length=100, primary_key=True)
     block_number = models.IntegerField(blank=True, null=True, db_index=True)
-    block_timestamp = models.DateTimeField(blank=True, null=True)
+    block_time = models.DateTimeField(blank=True, null=True)
     borrow_amount = models.TextField()
     borrower = models.TextField()
     fine_amount = models.TextField()
