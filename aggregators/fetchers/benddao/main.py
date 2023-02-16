@@ -45,7 +45,7 @@ class BenddaoFetcher(BaseFetcher):
             BenddaoLiquidate(
                 id=x["id"],
                 block_number=int(x["blockNumber"]),
-                block_timestamp=datetime.utcfromtimestamp(float(x["blockTimestamp"])),
+                block_time=datetime.utcfromtimestamp(float(x["blockTimestamp"])),
                 borrower=x["borrower"],
                 loan_id=int(x["loanId"]),
                 nft_asset=x["nftAsset"],
@@ -101,7 +101,7 @@ class BenddaoFetcher(BaseFetcher):
             BenddaoBorrow(
                 id=x["id"],
                 block_number=int(x["blockNumber"]),
-                block_timestamp=datetime.utcfromtimestamp(float(x["blockTimestamp"])),
+                block_time=datetime.utcfromtimestamp(float(x["blockTimestamp"])),
                 loan_id=int(x["loanId"]),
                 user=x["user"],
                 on_behalf_of=x["onBehalfOf"],
@@ -152,7 +152,7 @@ class BenddaoFetcher(BaseFetcher):
             BenddaoRedeem(
                 id=x["id"],
                 block_number=int(x["blockNumber"]),
-                block_timestamp=datetime.utcfromtimestamp(float(x["blockTimestamp"])),
+                block_time=datetime.utcfromtimestamp(float(x["blockTimestamp"])),
                 borrow_amount=x["borrowAmount"],
                 borrower=x["borrower"],
                 fine_amount=x["fineAmount"],

@@ -8,7 +8,7 @@ Please read ReadMe in ./db_local
 
 ## Conventions:
 - create app names in plural form
-- use only single scope for strings: `'` not `"`
+- use only single scope for strings: `"` not `'`
 - add libs via poetry: `poetry add <package_name>`
 
 ## Package management
