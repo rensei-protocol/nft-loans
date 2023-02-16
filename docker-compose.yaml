@@ -1,14 +1,20 @@
 version: '3.3'
 services:
-  db:
-    image: mysql
-    restart: always
-    environment:
-      MYSQL_DATABASE: 'db'
-      MYSQL_USER: 'user'
-      MYSQL_PASSWORD: 'password'
-      MYSQL_ROOT_PASSWORD: 'password'
+
+  redis:
+    container_name: "${REDIS_HOST_NAME}"
+    image: "bitnami/redis:6.0.9"
+#    networks:
+#      - "django_network_local"
     ports:
-      - '3306:3306'
-    expose:
-      - '3306'
+      - "${REDIS_PORT}:6379"
+    volumes:
+      - "./redis_data:/data"
+    environment:
+      - "REDIS_PORT=${REDIS_PORT}"
+      - "REDIS_PASSWORD=${REDIS_PASSWORD}"
+      - "ALLOW_EMPTY_PASSWORD=no"
+    sysctls:
+      net.core.somaxconn: 1024
+    restart: always
+    command: "/opt/bitnami/scripts/redis/run.sh --maxmemory 300mb"

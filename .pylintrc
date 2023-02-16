@@ -1,4 +1,5 @@
 [MASTER]
+jobs=4 #number of processes to use
 load-plugins=pylint_django
 
 [MESSAGES CONTROL]
@@ -8,9 +9,13 @@ disable=
     too-few-public-methods,
     too-many-arguments,
     too-many-instance-attributes,
+    missing-docstring,
+    logging-fstring-interpolation,
+    broad-exception-caught,
+    invalid-envvar-default,
 
 [FORMAT]
 max-line-length=120
 
 [META-VARIABLES]
-DJANGO_SETTINGS_MODULE=nft_loans.settings
+django-settings-module=nft_loans.settings
