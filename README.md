@@ -2,7 +2,8 @@
 
 ## About the project structure
 - All project was written with [django](https://docs.djangoproject.com/)
-- Database is `mysql`. You can set up mysql db with script in `./db_local` folder
+- Database is `postgres`. You can set up postgres db with script in `./db_local` folder.
+Please read ReadMe in ./db_local
 
 
 ## Conventions:
@@ -30,4 +31,4 @@ Must to-do:
 2. Migrate celery migrations if they are not migrated yet: `./manage.py migrate`
 3. Run redis: `make run_redis` or `make run_redis_bg`
 4. In terminal-1 run celery worker command: `make run_celery_worker`. It will run worker in celery
-5. In terminal-1 run celery beat command: `make run_celery_beat`. It will run scheduler (beat) in celery
+5. In terminal-2 run celery beat command: `make run_celery_beat`. It will run scheduler (beat) in celery
