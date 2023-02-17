@@ -28,6 +28,10 @@ app.conf.beat_schedule = {
         "task": "x2y2_fetch_task",
         "schedule": FETCHER_PERIOD_SEC,
     },
+    "x2y2_offer": {
+        "task": "x2y2_offchain_fetch_task",
+        "schedule": FETCHER_PERIOD_SEC,
+    },
     "nftfi_fetch": {
         "task": "nftfi_fetch_task",
         "schedule": FETCHER_PERIOD_SEC,
