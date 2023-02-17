@@ -73,3 +73,26 @@ class X2Y2Repaid(models.Model):
     # class Meta:
     # 	managed = False
     # 	db_table = 'x2y2_repaids'
+
+class X2Y2Offer(models.Model):
+    offer_id = models.TextField(primary_key=True)
+    token_id = models.TextField(blank=True, null=True)
+    nft_address = models.TextField(blank=True, null=True)
+    amount = models.TextField(blank=True, null=True)
+    repayment = models.TextField(blank=True, null=True)
+    apr = models.IntegerField(blank=True, null=True)
+    lender = models.TextField(blank=True, null=True)
+    expire_time = models.IntegerField(blank=True, null=True)
+    extra = models.TextField(blank=True, null=True)
+    duration = models.IntegerField(blank=True, null=True)
+    erc20_address = models.TextField(blank=True, null=True)
+    nonce = models.TextField(blank=True, null=True)
+    signature = models.TextField(blank=True, null=True)
+    status = models.IntegerField(blank=True, null=True)
+    create_time = models.IntegerField(blank=True, null=True)
+
+    # class Meta:
+    # 	managed = False
+    # 	db_table = 'x2y2_offer'
+
+
