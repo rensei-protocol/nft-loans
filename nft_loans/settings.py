@@ -64,8 +64,18 @@ SECRET_KEY = "django-insecure-elhi_*ia$6ur$wwh0$e43)%xras7u#y_ik$i7s4_*pu7bh7!o#
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    os.getenv("DOMAIN_NAME", "localhost"),
+    "127.0.0.1",
+]
 
+CSRF_TRUSTED_ORIGINS = [
+    # f"http://{os.getenv('DOMAIN_NAME', 'localhost')}",
+    # f"https://{os.getenv('DOMAIN_NAME', 'localhost')}",
+    "http://*.rensei.xyz",
+    "https://*.rensei.xyz",
+    # Add any other trusted domains to the list
+]
 
 # Application definition
 

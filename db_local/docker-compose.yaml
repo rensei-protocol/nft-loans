@@ -1,6 +1,6 @@
 version: '3.3'
 services:
-  db_postgres:
+  db:
     image: kartoza/postgis:13-3.1
     restart: always
     ports:
@@ -12,3 +12,10 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_DB: ${DB_NAME}
       ALLOW_IP_RANGE: 0.0.0.0/0
+
+    networks:
+      - "db_network"
+
+networks:
+  db_network:
+    external: True
