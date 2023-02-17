@@ -13,6 +13,11 @@ x-common-properties: &app-body
     - ./nft_loans/configs/.env.${DJANGO_ENV}
   depends_on:
     - redis
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "50m"
+      max-file: "5"
 
 services:
 

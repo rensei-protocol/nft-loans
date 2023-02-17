@@ -13,6 +13,11 @@ x-common-properties: &app-body
     - ./nft_loans/configs/.env.${DJANGO_ENV}
   depends_on:
     - redis
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "50m"
+      max-file: "5"
 
 services:
   web:
@@ -49,6 +54,28 @@ services:
   celery_beat:
     <<: *app-body
     command: bash -c "make run_celery_beat"
+
+  web_flower:
+    image: "nginx:latest"
+    restart: "always"
+    expose:
+      - "80"
+    environment:
+      - "DOMAIN_NAME=${FLOWER_DOMAIN_NAME}"
+      - "PROXY_PASS=http://flower:${FLOWER_PORT}"
+    volumes:
+      - "../infra/nginx/conf.d:/etc/nginx/conf.d/templates"
+    networks:
+      - "app_network"
+    labels:
+      - traefik.http.routers.${FLOWER_TRAEFIK_BACKEND}.rule=Host(`${FLOWER_DOMAIN_NAME}`)
+      - traefik.http.routers.${FLOWER_TRAEFIK_BACKEND}.tls=true
+      - traefik.http.routers.${FLOWER_TRAEFIK_BACKEND}.tls.certresolver=lets-encrypt
+      - traefik.port=80
+    depends_on:
+      - flower
+    command: /bin/bash -c "envsubst '$${DOMAIN_NAME} $${PROXY_PASS}' < /etc/nginx/conf.d/templates/conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+
 
   flower:
     <<: *app-body
