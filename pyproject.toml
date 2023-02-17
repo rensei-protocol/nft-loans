@@ -46,7 +46,6 @@ lazy-object-proxy = "1.9.0"
 matplotlib-inline = "0.1.6"
 mccabe = "0.7.0"
 multidict = "6.0.4"
-mysqlclient = "2.1.1"
 parso = "0.8.3"
 pexpect = "4.8.0"
 pg8000 = "1.29.4"
@@ -86,6 +85,8 @@ memcache = "^0.12.0"
 django-celery-results = "^2.4.0"
 redis = "^4.5.1"
 django-celery-beat = "^2.4.0"
+flower = "^1.2.0"
+psycopg2 = "^2.9.5"
 
 
 [build-system]

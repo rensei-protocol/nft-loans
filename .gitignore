@@ -134,3 +134,4 @@ dmypy.json
 /nft_loans/configs/.env.dev.local
 /redis_data/
 /db_local/postgres_data/
+/nft_loans/configs/.env.staging.local

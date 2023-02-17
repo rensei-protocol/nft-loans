@@ -1,8 +1,8 @@
 run_redis:
-	docker-compose --env-file ./nft_loans/configs/.env.dev.local up redis
+	docker-compose --env-file ./nft_loans/configs/.env.dev up redis
 
 run_redis_bg:
-	docker-compose --env-file ./nft_loans/configs/.env.dev.local up redis -d
+	docker-compose --env-file ./nft_loans/configs/.env.dev up redis -d
 
 pre_commit_hooks:
 	pre-commit run --all-files
@@ -12,3 +12,15 @@ run_celery_beat:
 
 run_celery_worker:
 	celery -A nft_loans worker --queues=nft_loans_queue -l INFO
+
+run_flower:
+	celery -A nft_loans flower --port=${FLOWER_PORT} --basic_auth=${FLOWER_USER}:${FLOWER_PASS} --host=0.0.0.0
+
+run_build_staging:
+	docker build -t nft.loans.staging .
+
+run_all_staging:
+	docker compose --env-file ./nft_loans/configs/.env.staging up
+
+run_all_staging_downup:
+	docker compose --env-file ./nft_loans/configs/.env.staging down && docker compose --env-file ./nft_loans/configs/.env.staging up -d
