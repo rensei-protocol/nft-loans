@@ -15,6 +15,7 @@ def x2y2_fetch_task():
     except Exception as e:
         logger.error(e)
 
+
 @app.task(name="x2y2_offchain_fetch_task")
 def x2y2_offchain_fetch_task():
     try:
