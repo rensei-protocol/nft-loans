@@ -74,6 +74,7 @@ class X2Y2Repaid(models.Model):
     # 	managed = False
     # 	db_table = 'x2y2_repaids'
 
+
 class X2Y2Offer(models.Model):
     offer_id = models.TextField(primary_key=True)
     token_id = models.TextField(blank=True, null=True)
@@ -94,5 +95,3 @@ class X2Y2Offer(models.Model):
     # class Meta:
     # 	managed = False
     # 	db_table = 'x2y2_offer'
-
-
