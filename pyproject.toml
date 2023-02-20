@@ -87,6 +87,9 @@ redis = "^4.5.1"
 django-celery-beat = "^2.4.0"
 flower = "^1.2.0"
 psycopg2 = "^2.9.5"
+djangorestframework = "^3.14.0"
+markdown = "^3.4.1"
+django-filter = "^22.1"
 
 
 [build-system]

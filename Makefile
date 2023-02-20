@@ -27,3 +27,6 @@ run_all_staging_downup:
 
 run_all_staging_local:
 	docker compose --env-file ./nft_loans/configs/.env.staging -f docker-compose.local.yaml up
+
+build_staging_image:
+	docker build -t nft.loans.staging .
