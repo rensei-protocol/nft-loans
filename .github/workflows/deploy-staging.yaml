@@ -22,4 +22,5 @@ jobs:
           script: |
             cd voyage/nft-loans
             git pull
+            make build_staging_image
             make run_all_staging_downup

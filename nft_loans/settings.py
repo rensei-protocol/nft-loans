@@ -89,6 +89,7 @@ INSTALLED_APPS = [
     # 3rd party apps
     "django_celery_results",
     "django_celery_beat",
+    "rest_framework",
     # custom apps
     "aggregators.apps.AggregatorsConfig",
 ]
