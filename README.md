@@ -32,3 +32,12 @@ Must to-do:
 3. Run redis: `make run_redis` or `make run_redis_bg`
 4. In terminal-1 run celery worker command: `make run_celery_worker`. It will run worker in celery
 5. In terminal-2 run celery beat command: `make run_celery_beat`. It will run scheduler (beat) in celery
+
+
+## Load predefined raws into db
+We are using `fixtures` to upload data into table. Please create/add `.json` file
+into `/fixtures` folder in app level.
+
+E.g. `aggregators/collections.json` file upload
+collection list. To run it you must run command: `./manage.py loaddata <fixture_name>`
+or `./manage.py loaddata collections`

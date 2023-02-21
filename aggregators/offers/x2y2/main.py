@@ -2,29 +2,19 @@ import os
 
 import requests
 
-from aggregators.models import X2Y2Offer
+from aggregators.models import X2Y2Offer, Collection
 
 
 class X2Y2OffchainFetcher:
     model = X2Y2Offer
     BASE_URL = "https://loan-api.x2y2.org/v1/offer/list"
-    # todo make a config file for this
-    # BoredApeYachtClub 0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D
-    # Azuki 0xED5AF388653567Af2F388E6224dC7C4b3241C544
-    # MoonBirds 0xED5AF388653567Af2F388E6224dC7C4b3241C544
-    # PudgyPenguins 0xBd3531dA5CF5857e7CfAA92426877b022e612cf8
-    collections = [
-        "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
-        "0xED5AF388653567Af2F388E6224dC7C4b3241C544",
-        "0xED5AF388653567Af2F388E6224dC7C4b3241C544",
-        "0xBd3531dA5CF5857e7CfAA92426877b022e612cf8",
-    ]
     API_KEY = os.getenv("X2Y2_API_KEY")
 
     def get_offers(self):
         headers = {"X-API-KEY": self.API_KEY, "accept": "application/json"}
         offers = []
-        for addr in self.collections:
+        collections = Collection.get_all_collections()
+        for addr in collections:
             more_page = True
             page = 1
             while more_page:

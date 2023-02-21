@@ -1,0 +1,30 @@
+[
+  {
+    "model": "aggregators.collection",
+    "fields": {
+      "name": "BoredApeYachtClub",
+      "address": "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d"
+    }
+  },
+  {
+    "model": "aggregators.collection",
+    "fields": {
+      "name": "Azuki",
+      "address": "0xed5af388653567af2f388e6224dc7c4b3241c544"
+    }
+  },
+  {
+    "model": "aggregators.collection",
+    "fields": {
+      "name": "MoonBirds",
+      "address": "0x23581767a106ae21c074b2276d25e5c3e136a68b"
+    }
+  },
+  {
+    "model": "aggregators.collection",
+    "fields": {
+      "name": "PudgyPenguins",
+      "address": "0xbd3531da5cf5857e7cfaa92426877b022e612cf8"
+    }
+  }
+]
