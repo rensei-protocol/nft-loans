@@ -32,6 +32,7 @@ def fulfilledLoans(request):
         )
         nftfiQuerySet = (
             NftfiLoan.objects.all()
+            .order_by("loan_id")
             .exclude(
                 loan_id__in=NftfiLiquidated.objects.all().values_list(
                     "loan_id", flat=True
@@ -65,6 +66,7 @@ def activeLoans(request, addr):
     try:
         x2y2QuerySet = (
             X2Y2Loan.objects.filter(borrower__iexact=addr)
+            .order_by("loan_id")
             .exclude(
                 loan_id__in=X2Y2Liquidation.objects.all().values_list(
                     "loan_id", flat=True
@@ -76,6 +78,7 @@ def activeLoans(request, addr):
         )
         nftfiQuerySet = (
             NftfiLoan.objects.filter(borrower__iexact=addr)
+            .order_by("loan_id")
             .exclude(
                 loan_id__in=NftfiLiquidated.objects.all().values_list(
                     "loan_id", flat=True
