@@ -14,6 +14,7 @@ from .models import (
     X2Y2Liquidation,
     X2Y2NonceCancelled,
     X2Y2Repaid,
+    Collection,
 )
 
 
@@ -75,3 +76,8 @@ class X2Y2NonceCancelledAdmin(admin.ModelAdmin):
 @admin.register(X2Y2Repaid)
 class X2Y2RepaidAdmin(admin.ModelAdmin):
     list_display = ("loan_id", "block_time", "txhash")
+
+
+@admin.register(Collection)
+class CollectionAdmin(admin.ModelAdmin):
+    list_display = ("name", "address")
