@@ -12,8 +12,10 @@ def validate_address(value):
 
 
 class Collection(models.Model):
-    name = models.CharField(max_length=50, primary_key=True)
-    address = models.CharField(max_length=44, validators=[validate_address])
+    name = models.CharField(max_length=50)
+    address = models.CharField(
+        max_length=44, validators=[validate_address], primary_key=True
+    )
 
     @classmethod
     def get_all_collections(cls):

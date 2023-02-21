@@ -1,4 +1,7 @@
 from django.db import models
+from django.db.models import JSONField
+
+from aggregators.models import Collection
 
 
 class NftfiLoan(models.Model):
@@ -70,3 +73,16 @@ class NftfiRenegotiated(models.Model):
     renegotiation_admin_fee = models.TextField(blank=True, null=True)
     renegotiation_fee = models.TextField(blank=True, null=True)
     transaction_hash = models.TextField(blank=True, null=True)
+
+
+class NftfiOffer(models.Model):
+    id = models.CharField(primary_key=True, max_length=40)
+    date = models.DateTimeField()
+    collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
+    lender = models.CharField(max_length=100)
+    lender_nonce = models.TextField(blank=True, null=True)
+    borrower = models.TextField(blank=True, null=True)
+    referrer = models.TextField(blank=True, null=True)
+    loan = JSONField()
+    signature = models.TextField(blank=True, null=True)
+    nftfi = JSONField(blank=True, null=True)
