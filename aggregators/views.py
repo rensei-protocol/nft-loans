@@ -16,6 +16,51 @@ from nft_loans.configs.logger import logger
 
 
 @api_view(["GET"])
+def fulfilledLoans(request):
+    try:
+        x2y2QuerySet = (
+            X2Y2Loan.objects.all()
+            .order_by("loan_id")
+            .exclude(
+                loan_id__in=X2Y2Liquidation.objects.all().values_list(
+                    "loan_id", flat=True
+                )
+            )
+            .exclude(
+                loan_id__in=X2Y2Repaid.objects.all().values_list("loan_id", flat=True)
+            )
+        )
+        nftfiQuerySet = (
+            NftfiLoan.objects.all()
+            .exclude(
+                loan_id__in=NftfiLiquidated.objects.all().values_list(
+                    "loan_id", flat=True
+                )
+            )
+            .exclude(
+                loan_id__in=NftfiRepaid.objects.all().values_list("loan_id", flat=True)
+            )
+        )
+        x2y2loan = []
+        nftfiloan = []
+
+        if x2y2QuerySet is not None:
+            x2y2loan = X2Y2LoanSerializer(x2y2QuerySet, many=True).data
+        if nftfiQuerySet is not None:
+            nftfiloan = NftFiLoanSerializer(nftfiQuerySet, many=True).data
+
+        loans = {
+            "x2y2": x2y2loan,
+            "nftfi": nftfiloan,
+        }
+        return Response(loans, status=HTTP_200_OK)
+
+    except Exception as e:
+        logger.exception(str(e))
+        return Response(e, status=HTTP_400_BAD_REQUEST)
+
+
+@api_view(["GET"])
 def activeLoans(request, addr):
     try:
         x2y2QuerySet = (
