@@ -11,4 +11,5 @@ urlpatterns = [
     # real apis
     path("loans/active/<str:addr>", views.activeLoans),
     path("loans/fulfilled", views.fulfilledLoans),
+    path("offers/filter", views.get_filtered_offers),
 ]
