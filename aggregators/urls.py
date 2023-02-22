@@ -10,4 +10,5 @@ urlpatterns = [
     path("generics/<int:loan_id>/", views_example.ExampleGeneric.as_view()),
     # real apis
     path("loans/active/<str:addr>", views.activeLoans),
+    path("loans/fulfilled", views.fulfilledLoans),
 ]
