@@ -55,9 +55,6 @@ class ArcadeLoanRolledOver(models.Model):
 
 class ArcadeLoanClaimed(models.Model):
     loan_id = models.IntegerField(primary_key=True)
-    token = models.TextField(blank=True, null=True)
-    to = models.TextField(blank=True, null=True)
-    amount = models.TextField(blank=True, null=True)
     block_number = models.IntegerField(blank=True, null=True)
     block_time_stamp = models.DateTimeField(blank=True, null=True)
     transaction_hash = models.TextField(blank=True, null=True)

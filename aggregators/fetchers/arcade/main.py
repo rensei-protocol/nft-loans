@@ -4,7 +4,12 @@ import requests
 from django.utils.timezone import datetime
 
 from aggregators.fetchers.base import BaseFetcher
-from aggregators.models import ArcadeLoan, ArcadeLoanRepaid, ArcadeLoanRolledOver
+from aggregators.models import (
+    ArcadeLoan,
+    ArcadeLoanRepaid,
+    ArcadeLoanRolledOver,
+    ArcadeLoanClaimed,
+)
 
 
 class ArcadeFetcher(BaseFetcher):
@@ -65,13 +70,45 @@ class ArcadeFetcher(BaseFetcher):
             json={"query": query, "variables": variables},
             timeout=5,
         )
-        print(result.json())
 
         res = result.json()["data"]["loanRolledOvers"]
         return [
             ArcadeLoanRolledOver(
                 old_loan_id=int(x["oldLoanId"]),
                 new_loan_id=int(x["newLoanId"]),
+                block_time_stamp=datetime.utcfromtimestamp(float(x["blockTimestamp"])),
+                block_number=x["blockNumber"],
+                transaction_hash=x["transactionHash"],
+            )
+            for x in res
+        ]
+
+    def get_loan_claimed(self, counter):
+        query = f"""
+        query ($skipAmount: Int) {{
+            loanClaimeds (
+                 {self.get_common_conditions(model=ArcadeLoanClaimed)}
+                 skip: $skipAmount
+            ) {{
+                loanId
+                blockNumber
+                blockTimestamp
+                transactionHash
+            }}
+        }}
+        """
+
+        variables = {"skipAmount": counter}
+        result = requests.post(
+            url=self.SUBGRAPH_URL,
+            json={"query": query, "variables": variables},
+            timeout=5,
+        )
+
+        res = result.json()["data"]["loanClaimeds"]
+        return [
+            ArcadeLoanClaimed(
+                loan_id=int(x["loanId"]),
                 block_time_stamp=datetime.utcfromtimestamp(float(x["blockTimestamp"])),
                 block_number=x["blockNumber"],
                 transaction_hash=x["transactionHash"],
@@ -192,7 +229,16 @@ class ArcadeFetcher(BaseFetcher):
             ignore_conflicts=self.IGNORE_CONFLICTS,
         )
 
+    def process_claimeds(self):
+        claimeds = self.get_all(self.get_loan_claimed)
+        ArcadeLoanClaimed.objects.bulk_create(
+            claimeds,
+            batch_size=self.BATCH_SIZE,
+            ignore_conflicts=self.IGNORE_CONFLICTS,
+        )
+
     def handle(self):
         self.process_loans()
         self.process_repays()
         self.process_rolled_over()
+        self.process_claimeds()
