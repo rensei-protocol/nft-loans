@@ -2,6 +2,7 @@ from aggregators.fetchers.arcade.main import ArcadeFetcher
 from aggregators.fetchers.benddao.main import BenddaoFetcher
 from aggregators.fetchers.nftfi.main import NftfiFetcher
 from aggregators.fetchers.x2y2.main import X2Y2Fetcher
+from aggregators.offers.nftfi.main import NftfiOfferHandler
 from aggregators.offers.x2y2.main import X2Y2OffchainFetcher
 from nft_loans.celery import app
 from nft_loans.configs.logger import logger
@@ -30,6 +31,12 @@ def nftfi_fetch_task():
     try:
         fetcher = NftfiFetcher()
         fetcher.handle()
+    except Exception as e:
+        logger.error(e)
+
+    try:
+        offer_handler = NftfiOfferHandler()
+        offer_handler.handle()
     except Exception as e:
         logger.error(e)
 
