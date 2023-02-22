@@ -4,15 +4,80 @@ import requests
 from django.utils.timezone import datetime
 
 from aggregators.fetchers.base import BaseFetcher
-from aggregators.models import (
-    X2Y2Loan,
-    ArcadeLoan,
-)
+from aggregators.models import ArcadeLoan, ArcadeLoanRepaid, ArcadeLoanRolledOver
 
 
 class ArcadeFetcher(BaseFetcher):
-    model = X2Y2Loan
-    SUBGRAPH_URL = "https://api.studio.thegraph.com/query/30834/nft/enroheohnenrh"
+    SUBGRAPH_URL = "https://api.studio.thegraph.com/query/42281/subgraph-arcade/v0.1.1"
+
+    def get_repays(self, counter):
+        query = f"""
+        query ($skipAmount: Int) {{
+            loanRepaids (
+                 {self.get_common_conditions(model=ArcadeLoanRepaid)}
+                 skip: $skipAmount
+            ) {{
+                loanId
+                blockNumber
+                blockTimestamp
+                transactionHash
+            }}
+        }}
+        """
+
+        variables = {"skipAmount": counter}
+        result = requests.post(
+            url=self.SUBGRAPH_URL,
+            json={"query": query, "variables": variables},
+            timeout=5,
+        )
+
+        res = result.json()["data"]["loanRepaids"]
+        return [
+            ArcadeLoanRepaid(
+                loan_id=int(x["loanId"]),
+                block_time_stamp=datetime.utcfromtimestamp(float(x["blockTimestamp"])),
+                block_number=x["blockNumber"],
+                transaction_hash=x["transactionHash"],
+            )
+            for x in res
+        ]
+
+    def get_rolled_over(self, counter):
+        query = f"""
+        query ($skipAmount: Int) {{
+            loanRolledOvers (
+                 {self.get_common_conditions(model=ArcadeLoanRolledOver)}
+                 skip: $skipAmount
+            ) {{
+                oldLoanId
+                newLoanId
+                blockNumber
+                blockTimestamp
+                transactionHash
+            }}
+        }}
+        """
+
+        variables = {"skipAmount": counter}
+        result = requests.post(
+            url=self.SUBGRAPH_URL,
+            json={"query": query, "variables": variables},
+            timeout=5,
+        )
+        print(result.json())
+
+        res = result.json()["data"]["loanRolledOvers"]
+        return [
+            ArcadeLoanRolledOver(
+                old_loan_id=int(x["oldLoanId"]),
+                new_loan_id=int(x["newLoanId"]),
+                block_time_stamp=datetime.utcfromtimestamp(float(x["blockTimestamp"])),
+                block_number=x["blockNumber"],
+                transaction_hash=x["transactionHash"],
+            )
+            for x in res
+        ]
 
     def get_loans(self, counter):
         """Gets loans up to 1000 results"""
@@ -41,7 +106,7 @@ class ArcadeFetcher(BaseFetcher):
 	            startDate
 	            state
 	            timestamp
-	            txhash
+	            transactionHash
 	        }}
 	    }}
 	    """
@@ -54,6 +119,7 @@ class ArcadeFetcher(BaseFetcher):
         )
 
         res = result.json()["data"]["loans"]
+
         return [
             ArcadeLoan(
                 loan_id=int(x["id"]),
@@ -71,7 +137,7 @@ class ArcadeFetcher(BaseFetcher):
                 ),
                 nft_asset=x["collateralAddress"],
                 nft_token_id=x["collateralId"],
-                txhash=x["txhash"],
+                txhash=x["transactionHash"],
                 state=x["state"],
                 num_installments=x["numInstallments"],
                 num_installments_paid=x["numInstallmentsPaid"],
@@ -110,5 +176,23 @@ class ArcadeFetcher(BaseFetcher):
             ignore_conflicts=self.IGNORE_CONFLICTS,
         )
 
+    def process_repays(self):
+        raw_repays = self.get_all(self.get_repays)
+        ArcadeLoanRepaid.objects.bulk_create(
+            raw_repays,
+            batch_size=self.BATCH_SIZE,
+            ignore_conflicts=self.IGNORE_CONFLICTS,
+        )
+
+    def process_rolled_over(self):
+        rolled_overs = self.get_all(self.get_rolled_over)
+        ArcadeLoanRolledOver.objects.bulk_create(
+            rolled_overs,
+            batch_size=self.BATCH_SIZE,
+            ignore_conflicts=self.IGNORE_CONFLICTS,
+        )
+
     def handle(self):
         self.process_loans()
+        self.process_repays()
+        self.process_rolled_over()
