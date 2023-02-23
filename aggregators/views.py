@@ -18,6 +18,8 @@ from aggregators.models import (
 from aggregators.serializers import (
     X2Y2LoanSerializer,
     NftFiLoanSerializer,
+    OfferFilterSerializer,
+    OfferViewSerializer,
     ArcadeLoanSerializer,
 )
 from nft_loans.configs.logger import logger
@@ -133,3 +135,14 @@ def activeLoans(request, addr):
     except Exception as e:
         logger.exception(str(e))
         return Response(e, status=HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+def get_filtered_offers(request):
+    serialized = OfferFilterSerializer(data=request.data)
+    if not serialized.is_valid():
+        return Response(serialized.errors, status=HTTP_400_BAD_REQUEST)
+
+    all_offers = serialized.get_queryset()
+    deserialized = OfferViewSerializer(all_offers, many=True).data
+    return Response(deserialized, status=HTTP_200_OK)

@@ -1,12 +1,15 @@
 import os
+from datetime import datetime
 
 import requests
 
-from aggregators.models import Collection, NftfiOffer
+from aggregators.models import Collection, CollectionOffer
+from aggregators.models.helper import NFTFI
+from aggregators.offers.base import OfferHandler
 from nft_loans.configs.logger import logger
 
 
-class NftfiOfferHandler:
+class NftfiOfferHandler(OfferHandler):
     def __init__(self):
         self.auth_payload = {
             "message": 'Welcome to NFTfi!\r\nClick "Sign" to sign in. No password needed!\r\n\r\nThis message proves you own this wallet address : 0xEB8fb2f6D41706759B8544D5adA16FC710211ca2 \r\n\r\nBy signing this message you agree to our terms and conditions, available at: \r\nhttps://nftfi.com/terms-and-conditions/ \r\nhttps://nftfi.com/terms-of-use/ \r\nversion hash: 9717efa',
@@ -16,7 +19,7 @@ class NftfiOfferHandler:
         }
         self.NFTFI_KEY = os.getenv("NFTFI_KEY")
         self.NFTFI_SDK_URL = os.getenv("NFTFI_SDK_URL")
-        self.PAGE_SIZE = 50
+        super().__init__(NFTFI)
 
     def get_bearer_token(self):
         url = self.NFTFI_SDK_URL + "/authorization/token"
@@ -32,18 +35,28 @@ class NftfiOfferHandler:
             return None
 
     def serialize_order(self, data: dict, collection: Collection):
-        return NftfiOffer(
-            id=data["id"],
-            date=data["date"]["offered"],
-            collection=collection,
+        offer = CollectionOffer(
+            id=data["id"],  # pk
+            marketplace=NFTFI,
+            # base fields
+            apr=-1,  # need to recalculate
+            amount=data["terms"]["loan"]["principal"],
+            repayment=data["terms"]["loan"]["repayment"],
+            expire_time=datetime.utcfromtimestamp(
+                float(data["terms"]["loan"]["expiry"])
+            ),
+            duration=data["terms"]["loan"]["duration"],
+            erc20_address=data["terms"]["loan"]["currency"],
             lender=data["lender"]["address"],
-            lender_nonce=data["lender"]["nonce"],
-            borrower=data["borrower"]["address"],
-            referrer=data["referrer"]["address"],
-            loan=data["terms"]["loan"],
+            collection=collection,
+            create_time=data["date"]["offered"],
+            nonce=data["lender"]["nonce"],
             signature=data["signature"],
-            nftfi=data["nftfi"],
+            # nftfi fields
+            nftfi_metadata=data,
         )
+        offer.apr = offer.calculate_apr()
+        return offer
 
     def get_collection_offers(self, collection: Collection):
         logger.info(f"Processing {collection.address} - {collection.name}")
@@ -89,16 +102,6 @@ class NftfiOfferHandler:
             current_page += 1
             params["page"] = current_page
         return orders
-
-    def save_all_offers(self):
-        collections = Collection.objects.all()
-        orders = []
-        for collection in collections:
-            orders += self.get_collection_offers(collection)
-        NftfiOffer.objects.bulk_create(orders, 500, ignore_conflicts=True)
-
-    def handle(self):
-        self.save_all_offers()
 
 
 # handler = NftfiOfferHandler()

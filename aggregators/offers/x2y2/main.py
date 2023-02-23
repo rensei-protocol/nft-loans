@@ -1,63 +1,62 @@
 import os
+from datetime import datetime
 
 import requests
 
-from aggregators.models import X2Y2Offer, Collection
+from aggregators.models import Collection, CollectionOffer
+from aggregators.models.helper import X2Y2
+from aggregators.offers.base import OfferHandler
 
 
-class X2Y2OffchainFetcher:
-    model = X2Y2Offer
+class X2Y2OfferHandler(OfferHandler):
+    model = CollectionOffer
     BASE_URL = "https://loan-api.x2y2.org/v1/offer/list"
     API_KEY = os.getenv("X2Y2_API_KEY")
 
-    def get_offers(self):
+    def __init__(self):
+        super().__init__(X2Y2)
+
+    def get_collection_offers(self, collection: Collection):
         headers = {"X-API-KEY": self.API_KEY, "accept": "application/json"}
         offers = []
-        collections = Collection.get_all_collections()
-        for addr in collections:
-            more_page = True
-            page = 1
-            while more_page:
-                params = {
-                    "nftAddress": addr,
-                    "tokenId": "1",
-                    "pageSize": "20",
-                    "page": page,
-                }
-                result = requests.get(
-                    self.BASE_URL,
-                    headers=headers,
-                    params=params,
-                    timeout=5,
+        addr = collection.address
+        more_page = True
+        page = 1
+        while more_page:
+            params = {
+                "nftAddress": addr,
+                "tokenId": "1",
+                "pageSize": self.PAGE_SIZE,
+                "page": page,
+            }
+            result = requests.get(
+                self.BASE_URL,
+                headers=headers,
+                params=params,
+                timeout=5,
+            )
+            data = result.json()["data"]
+            more_page = data["more_page"]
+            page += 1
+            items = data["list"]
+            for x in items:
+                x2y2_offer = CollectionOffer(
+                    id=x["offerId"],  # pk
+                    marketplace=X2Y2,
+                    # base class fields
+                    apr=round(float(x["apr"]) / 100, 1),
+                    amount=x["amount"],
+                    repayment=x["repayment"],
+                    expire_time=datetime.utcfromtimestamp(float(x["expireTime"])),
+                    duration=x["duration"],
+                    erc20_address=x["erc20Address"],
+                    lender=x["lender"],
+                    collection=collection,
+                    create_time=datetime.utcfromtimestamp(float(x["createTime"])),
+                    nonce=x["nonce"],
+                    signature=x["signature"],
+                    # x2y2 fields
+                    x2y2_metadata=x,
                 )
-                data = result.json()["data"]
-                more_page = data["more_page"]
-                page += 1
-                items = data["list"]
-                for x in items:
-                    x2y2_offer = X2Y2Offer(
-                        offer_id=x["offerId"],
-                        token_id=x["tokenId"],
-                        nft_address=x["nftAddress"],
-                        amount=x["amount"],
-                        repayment=x["repayment"],
-                        apr=x["apr"],
-                        lender=x["lender"],
-                        expire_time=x["expireTime"],
-                        extra=x["extra"],
-                        duration=x["duration"],
-                        erc20_address=x["erc20Address"],
-                        nonce=x["nonce"],
-                        signature=x["signature"],
-                        status=x["status"],
-                        create_time=x["createTime"],
-                    )
-                    offers.append(x2y2_offer)
+                offers.append(x2y2_offer)
         return offers
-
-    def process_offers(self):
-        raw_offers = self.get_offers()
-        X2Y2Offer.objects.bulk_create(raw_offers, 500, True)
-
-    def handle(self):
-        self.process_offers()
