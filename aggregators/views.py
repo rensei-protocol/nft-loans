@@ -10,8 +10,16 @@ from aggregators.models import (
     X2Y2Loan,
     X2Y2Repaid,
     X2Y2Liquidation,
+    ArcadeLoan,
+    ArcadeLoanRepaid,
+    ArcadeLoanRolledOver,
+    ArcadeLoanClaimed,
 )
-from aggregators.serializers import X2Y2LoanSerializer, NftFiLoanSerializer
+from aggregators.serializers import (
+    X2Y2LoanSerializer,
+    NftFiLoanSerializer,
+    ArcadeLoanSerializer,
+)
 from nft_loans.configs.logger import logger
 
 
@@ -88,19 +96,38 @@ def activeLoans(request, addr):
                 loan_id__in=NftfiRepaid.objects.all().values_list("loan_id", flat=True)
             )
         )
+        arcadeQuerySet = (
+            ArcadeLoan.objects.filter(borrower__iexact=addr)
+            .order_by("loan_id")
+            .exclude(
+                loan_id__in=ArcadeLoanRepaid.objects.all().values_list(
+                    "loan_id", flat=True
+                )
+            )
+            .exclude(
+                loan_id__in=ArcadeLoanClaimed.objects.all().values_list(
+                    "loan_id", flat=True
+                )
+            )
+            .exclude(
+                loan_id__in=ArcadeLoanRolledOver.objects.all().values_list(
+                    "old_loan_id", flat=True
+                )
+            )
+        )
 
         x2y2loan = []
         nftfiloan = []
+        arcadeloan = []
 
         if x2y2QuerySet is not None:
             x2y2loan = X2Y2LoanSerializer(x2y2QuerySet, many=True).data
         if nftfiQuerySet is not None:
             nftfiloan = NftFiLoanSerializer(nftfiQuerySet, many=True).data
+        if arcadeQuerySet is not None:
+            arcadeloan = ArcadeLoanSerializer(arcadeQuerySet, many=True).data
 
-        loans = {
-            "x2y2": x2y2loan,
-            "nftfi": nftfiloan,
-        }
+        loans = {"x2y2": x2y2loan, "nftfi": nftfiloan, "arcade": arcadeloan}
         return Response(loans, status=HTTP_200_OK)
 
     except Exception as e:
