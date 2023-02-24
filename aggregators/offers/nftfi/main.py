@@ -36,7 +36,7 @@ class NftfiOfferHandler(OfferHandler):
 
     def serialize_order(self, data: dict, collection: Collection):
         offer = CollectionOffer(
-            id=data["id"],  # pk
+            id=f"{NFTFI}_{data['id']}",  # pk
             marketplace=NFTFI,
             # base fields
             apr=-1,  # need to recalculate

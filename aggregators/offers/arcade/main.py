@@ -15,7 +15,7 @@ class ArcadeOfferHandler(OfferHandler):
 
     def serialize_order(self, data: dict, collection: Collection):
         offer = CollectionOffer(
-            id=str(data["id"]),  # pk
+            id=f"{ARCADE}_{data['id']}",  # pk
             marketplace=ARCADE,
             # base fields
             apr=-1,  # need to recalculate
