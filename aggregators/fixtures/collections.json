@@ -26,5 +26,47 @@
       "name": "PudgyPenguins",
       "address": "0xbd3531da5cf5857e7cfaa92426877b022e612cf8"
     }
+  },
+  {
+    "model": "aggregators.collection",
+    "fields": {
+      "name": "Otherdeed (OTHR)",
+      "address": "0x34d85c9CDeB23FA97cb08333b511ac86E1C4E258"
+    }
+  },
+  {
+    "model": "aggregators.collection",
+    "fields": {
+      "name": "MutantApeYachtClub (MAYC)",
+      "address": "0x60E4d786628Fea6478F785A6d7e704777c86a7c6"
+    }
+  },
+  {
+    "model": "aggregators.collection",
+    "fields": {
+      "name": "CloneX",
+      "address": "0x49cF6f5d44E70224e2E23fDcdd2C053F30aDA28B"
+    }
+  },
+  {
+    "model": "aggregators.collection",
+    "fields": {
+      "name": "Opepen Edition (OPEPEN)",
+      "address": "0x6339e5E072086621540D0362C4e3Cea0d643E114"
+    }
+  },
+  {
+    "model": "aggregators.collection",
+    "fields": {
+      "name": "Checks",
+      "address": "0x34eEBEE6942d8Def3c125458D1a86e0A897fd6f9"
+    }
+  },
+  {
+    "model": "aggregators.collection",
+    "fields": {
+      "name": "Weirdo Ghost Gang (GHOST)",
+      "address": "0x9401518f4EBBA857BAA879D9f76E1Cc8b31ed197"
+    }
   }
 ]
