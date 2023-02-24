@@ -41,7 +41,7 @@ class X2Y2OfferHandler(OfferHandler):
             items = data["list"]
             for x in items:
                 x2y2_offer = CollectionOffer(
-                    id=x["offerId"],  # pk
+                    id=f"{X2Y2}_{x['offerId']}",  # pk
                     marketplace=X2Y2,
                     # base class fields
                     apr=round(float(x["apr"]) / 100, 1),
