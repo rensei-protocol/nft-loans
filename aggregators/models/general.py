@@ -3,7 +3,12 @@ from django.db import models
 from django.db.models import JSONField
 from django.utils.translation import gettext_lazy as _
 
-from aggregators.models.helper import MARKETPLACES
+from aggregators.models.helper import (
+    MARKETPLACES,
+    CURRENCY_METADATA_SOURCE,
+    NOTABENE,
+    NETWORKS_CHOICES,
+)
 from nft_loans.configs.logger import logger
 
 
@@ -82,3 +87,16 @@ class CollectionOffer(models.Model):
         except Exception as e:
             logger.error(e)
             return -1
+
+
+class CurrencyMetadata(models.Model):
+    address = models.CharField(max_length=44, primary_key=True)
+    symbol = models.CharField(max_length=15, null=True, blank=True)
+    name = models.CharField(max_length=50, null=True, blank=True)
+    decimals = models.IntegerField(null=True, blank=True)
+    network = models.CharField(
+        max_length=20, null=True, blank=True, choices=NETWORKS_CHOICES
+    )
+    source = models.CharField(
+        max_length=15, choices=CURRENCY_METADATA_SOURCE, default=NOTABENE
+    )

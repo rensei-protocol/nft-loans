@@ -45,4 +45,9 @@ app.conf.beat_schedule = {
         "task": "update_offers",
         "schedule": FETCHER_PERIOD_SEC,
     },
+    # currency handler
+    "currency_fetch_periodic": {
+        "task": "currency_fetch_task",
+        "schedule": 2 * FETCHER_PERIOD_SEC,
+    },
 }
