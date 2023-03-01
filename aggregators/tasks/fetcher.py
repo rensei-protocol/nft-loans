@@ -1,5 +1,6 @@
 from aggregators.fetchers.arcade.main import ArcadeFetcher
 from aggregators.fetchers.benddao.main import BenddaoFetcher
+from aggregators.fetchers.currency import CurrencyCoingeckoFetcher
 from aggregators.fetchers.nftfi.main import NftfiFetcher
 from aggregators.fetchers.x2y2.main import X2Y2Fetcher
 from nft_loans.celery import app
@@ -38,5 +39,14 @@ def benddao_fetch_task():
     try:
         fetcher = BenddaoFetcher()
         fetcher.handle()
+    except Exception as e:
+        logger.error(e)
+
+
+@app.task(name="currency_fetch_task")
+def currency_fetch_task():
+    try:
+        fetcher = CurrencyCoingeckoFetcher()
+        fetcher.fetch()
     except Exception as e:
         logger.error(e)
