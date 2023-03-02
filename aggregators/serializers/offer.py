@@ -14,12 +14,17 @@ class CurrencyPreloadSerializer(serializers.ModelSerializer):
 class NFTScanAssetSerializer(serializers.Serializer):
     token_id = serializers.CharField()
     name = serializers.CharField()
-    erc_type = serializers.CharField()
-    metadata_json = serializers.JSONField()
+    erc_type = serializers.CharField(allow_null=True)
+    metadata_json = serializers.JSONField(allow_null=True)
 
     def to_representation(self, instance):
         core_repr = super().to_representation(instance)
-        core_repr["metadata_json"] = json.loads(core_repr["metadata_json"])
+        core_repr["metadata_json"] = (
+            json.loads(core_repr["metadata_json"])
+            if core_repr["metadata_json"]
+            else None
+        )
+
         return core_repr
 
 
