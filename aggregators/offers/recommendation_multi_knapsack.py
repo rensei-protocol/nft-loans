@@ -125,6 +125,8 @@ class RecommendationKnapsackMultiBin:
 
     def get_recommendations(self):
         results = {}
+        if len(self.offers) == 0:
+            return []
         for tag, fee_percent in self.RATIO_OPTIONS.items():
             offers, total_amount, total_fee = self.calculate(fee_percent)
             key = f"{total_amount}_{total_fee}"
