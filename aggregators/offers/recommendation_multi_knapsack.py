@@ -4,7 +4,7 @@ from ortools.sat.python import cp_model
 from aggregators.serializers import OfferViewSerializer
 
 
-class RecommendationKnapsackV2:
+class RecommendationKnapsackMultiBin:
     RATIO_OPTIONS = {"FEE_OPTIMIZED": 99, "AMOUNT_OPTIMIZED": 1, "BALANCED": 51}
 
     def __init__(self, offers, currency, amount, threshold):
@@ -20,7 +20,6 @@ class RecommendationKnapsackV2:
     def get_offer_args(self, fee_ratio):
         fee = []
         amounts = []
-        threshold_weight = []
         max_amount = max(off.amount for off in self.offers)
         weight_bias = []
         AMOUNT_NORMALIZER = pow(10, self.currency.decimals - 5)
@@ -31,9 +30,6 @@ class RecommendationKnapsackV2:
             fee.append(1 / offer.apr * 100)
             # make amount fit into integer
             amounts.append(int(offer.amount / AMOUNT_NORMALIZER))
-            # collection threshold condition
-            # collection = offer.collection.address.lower()
-            # threshold_weight.append(1 if collection in self.threshold else 1000000)
 
         max_fee = max(fee)
         for i in range(len(fee)):
@@ -76,35 +72,17 @@ class RecommendationKnapsackV2:
             bin_index += 1
 
         # Add constraints for each type of item
-        # knapsacks = [None] * len(type_items)
         bin_index = 0
         weights_cond = []
         objective = []
         for collection, offers_of_collection in collection_offers.items():
-            # knapsacks[bin_index] = model.NewIntVar(0, total_weight, f"knapsack_{bin_index}")
-
-            # Add a constraint that limits the number of items of this type that can be selected
-            # objective_w = []
-            # for i in range(len(offers_of_collection)):
-            #     objective_w.append(
-            #         cp_model.LinearExpr.Term(x[i, bin_index], items[i].weight)
-            #     )
-            # model.Maximize(cp_model.LinearExpr.Sum(objective_w))
-
+            # Constraint to ensure that collection will not exceed threshold num
             model.Add(
                 sum(x[i, bin_index] for i in range(len(offers_of_collection)))
                 <= self.threshold[collection.address]
             )
 
-            # Add a constraint that ensures that all items of the same type are in the same knapsack
-            # model.Add(sum(x[item] for item in items) <= 1)
-            # model.Add(
-            #     sum(x[i, bin_index] * items[i].weight for i in range(len(items)))
-            #     <= knapsacks[bin_index]
-            # )
-
-            # Add weight and value constraints for the items of this type
-
+            # create value objective to maximize it
             for i in range(len(offers_of_collection)):
                 objective.append(
                     cp_model.LinearExpr.Term(
@@ -112,6 +90,7 @@ class RecommendationKnapsackV2:
                     )
                 )
 
+            # create total weight to limit it with weight_limit in future
             weights_cond += [
                 x[i, bin_index] * collection_weights[collection][i]
                 for i in range(len(offers_of_collection))
@@ -139,9 +118,9 @@ class RecommendationKnapsackV2:
                         total_w_res += items[i].fee
                         total_v_res += items[i].amount
                 bin_index += 1
-            print(f"Total weight: {total_w_res}")
-            print(f"Total value: {total_v_res}")
-            print(f"Selected items: {selected_items}")
+            # print(f"Total weight: {total_w_res}")
+            # print(f"Total value: {total_v_res}")
+            # print(f"Selected items: {selected_items}")
         return selected_items, total_v_res, total_w_res
 
     def get_recommendations(self):
