@@ -40,8 +40,8 @@ class NftfiOfferHandler(OfferHandler):
             marketplace=NFTFI,
             # base fields
             apr=-1,  # need to recalculate
-            amount=data["terms"]["loan"]["principal"],
-            repayment=data["terms"]["loan"]["repayment"],
+            amount=float(data["terms"]["loan"]["principal"]),
+            repayment=float(data["terms"]["loan"]["repayment"]),
             expire_time=datetime.utcfromtimestamp(
                 float(data["terms"]["loan"]["expiry"])
             ),
@@ -53,9 +53,10 @@ class NftfiOfferHandler(OfferHandler):
             nonce=data["lender"]["nonce"],
             signature=data["signature"],
             # nftfi fields
-            nftfi_metadata=data,
+            # nftfi_metadata=data,
         )
         offer.apr = offer.calculate_apr()
+        offer.set_essentials()
         return offer
 
     def get_collection_offers(self, collection: Collection):

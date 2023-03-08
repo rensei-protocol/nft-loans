@@ -43,7 +43,7 @@ class CurrencyCoingeckoFetcher:
                 return
 
             with transaction.atomic():
-                CurrencyMetadata.objects.all().delete()
+                # CurrencyMetadata.objects.all().delete()
                 CurrencyMetadata.objects.bulk_create(
                     currencies,
                     batch_size=self.batch_size,

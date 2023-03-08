@@ -5,7 +5,13 @@ from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 
 from aggregators.fetchers.nft_metadata import NftscanMetadataFetcher
 from aggregators.models import CurrencyMetadata, CollectionOffer, Collection
-from aggregators.serializers import CurrencyPreloadSerializer
+from aggregators.offers.recommendation_multi_knapsack import (
+    RecommendationKnapsackMultiBin,
+)
+from aggregators.serializers import (
+    CurrencyPreloadSerializer,
+    OfferFilterSerializer,
+)
 
 
 @api_view(["GET"])
@@ -30,3 +36,22 @@ def offer_preload_view(request, owner):
         **min_max_fields,
     }
     return Response(preload_obj, status=HTTP_200_OK)
+
+
+@api_view(["POST"])
+def get_recommended_offers_multi_bin(request):
+    serialized = OfferFilterSerializer(data=request.data)
+    if not serialized.is_valid():
+        return Response(serialized.errors, status=HTTP_400_BAD_REQUEST)
+
+    all_offers = serialized.get_queryset()
+    validated_data = serialized.validated_data
+    recommendation_handler = RecommendationKnapsackMultiBin(
+        all_offers,
+        validated_data["currency"],
+        validated_data["amount"],
+        validated_data["threshold"],
+    )
+    results = recommendation_handler.get_recommendations()
+    # deserialized = OfferViewSerializer(all_offers, many=True).data
+    return Response(results, status=HTTP_200_OK)

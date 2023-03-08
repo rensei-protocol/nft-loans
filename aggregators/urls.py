@@ -12,6 +12,6 @@ urlpatterns = [
     path("loans/active/<str:addr>", views.activeLoans),
     path("loans/fulfilled", views.fulfilledLoans),
     # offers
-    path("offers/filter", views.get_filtered_offers),
+    path("offers/filter", views.get_recommended_offers_multi_bin),
     path("offers/preload/<str:owner>", views.offer_preload_view),
 ]

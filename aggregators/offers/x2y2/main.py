@@ -40,13 +40,13 @@ class X2Y2OfferHandler(OfferHandler):
             page += 1
             items = data["list"]
             for x in items:
-                x2y2_offer = CollectionOffer(
+                offer = CollectionOffer(
                     id=f"{X2Y2}_{x['offerId']}",  # pk
                     marketplace=X2Y2,
                     # base class fields
                     apr=round(float(x["apr"]) / 100, 1),
-                    amount=x["amount"],
-                    repayment=x["repayment"],
+                    amount=float(x["amount"]),
+                    repayment=float(x["repayment"]),
                     expire_time=datetime.utcfromtimestamp(float(x["expireTime"])),
                     duration=x["duration"],
                     erc20_address=x["erc20Address"],
@@ -56,7 +56,8 @@ class X2Y2OfferHandler(OfferHandler):
                     nonce=x["nonce"],
                     signature=x["signature"],
                     # x2y2 fields
-                    x2y2_metadata=x,
+                    # x2y2_metadata=x,
                 )
-                offers.append(x2y2_offer)
+                offer.set_essentials()
+                offers.append(offer)
         return offers

@@ -19,7 +19,7 @@ class ArcadeOfferHandler(OfferHandler):
             marketplace=ARCADE,
             # base fields
             apr=-1,  # need to recalculate
-            amount=data["principal"],
+            amount=float(data["principal"]),
             repayment=-1,
             expire_time=data["expiresAt"],
             duration=data["durationSecs"],
@@ -30,9 +30,10 @@ class ArcadeOfferHandler(OfferHandler):
             nonce=None,
             signature=None,
             # nftfi fields
-            arcade_metadata=data,
+            # arcade_metadata=data,
         )
         offer.apr = offer.calculate_apr_arcade_by_set_repayment(data["interestRate"])
+        offer.set_essentials()
         return offer
 
     def get_collection_offers_without_query(
