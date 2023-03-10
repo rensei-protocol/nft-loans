@@ -30,6 +30,7 @@ class NFTScanAssetSerializer(serializers.Serializer):
 
 class NFTScanMetadataSerializer(serializers.Serializer):
     contract_name = serializers.CharField()
+    contract_address = serializers.CharField()
     # logo_url = serializers.URLField()
     owns_total = serializers.IntegerField()
     symbol = serializers.CharField()
