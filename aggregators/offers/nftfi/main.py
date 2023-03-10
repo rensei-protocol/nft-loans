@@ -53,7 +53,7 @@ class NftfiOfferHandler(OfferHandler):
             nonce=data["lender"]["nonce"],
             signature=data["signature"],
             # nftfi fields
-            # nftfi_metadata=data,
+            nftfi_metadata=data,
         )
         offer.apr = offer.calculate_apr()
         offer.set_essentials()

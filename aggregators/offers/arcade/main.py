@@ -30,7 +30,7 @@ class ArcadeOfferHandler(OfferHandler):
             nonce=None,
             signature=None,
             # nftfi fields
-            # arcade_metadata=data,
+            arcade_metadata=data,
         )
         offer.apr = offer.calculate_apr_arcade_by_set_repayment(data["interestRate"])
         offer.set_essentials()

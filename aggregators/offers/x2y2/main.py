@@ -56,7 +56,7 @@ class X2Y2OfferHandler(OfferHandler):
                     nonce=x["nonce"],
                     signature=x["signature"],
                     # x2y2 fields
-                    # x2y2_metadata=x,
+                    x2y2_metadata=x,
                 )
                 offer.set_essentials()
                 offers.append(offer)
