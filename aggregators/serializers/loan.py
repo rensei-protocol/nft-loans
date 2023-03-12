@@ -83,7 +83,7 @@ class CollectionThresholdSerializer(serializers.Serializer):
             raise serializers.ValidationError("count cannot be <= 0!")
         if data["collection"][:2] != "0x":
             raise serializers.ValidationError("address must be valid!")
-        return {i["collection"]: i["count"]}
+        return {data["collection"]: data["count"]}
 
 
 class OfferFilterSerializer(serializers.Serializer):
