@@ -142,5 +142,5 @@ class Listing(models.Model):
     borrower_stats = JSONField()
     vaulted_items = JSONField(null=True, blank=True)
     immutable_collection = models.CharField(max_length=44, null=True, blank=True)
-    immutable_token_id = models.CharField(max_length=44, null=True, blank=True)
+    immutable_token_id = models.TextField(null=True, blank=True)
     token_data = JSONField(null=True, blank=True)
