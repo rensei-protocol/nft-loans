@@ -20,3 +20,10 @@ SOLANA = "solana"
 BINANCE = "binance_smart_chain"
 SUPPORTED_NETWORKS = [ETHEREUM]
 NETWORKS_CHOICES = ((net, net) for net in SUPPORTED_NETWORKS)
+
+
+SNOWGNESIS_LISTING_PROTOCOLS = {
+    1: NFTFI,
+    10: NFTFI,
+    30: ARCADE,
+}

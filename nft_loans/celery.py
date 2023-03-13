@@ -50,4 +50,8 @@ app.conf.beat_schedule = {
         "task": "currency_fetch_task",
         "schedule": 2 * FETCHER_PERIOD_SEC,
     },
+    "fetch_snowgnosis_listing_periodic": {
+        "task": "fetch_snowgnosis_listing",
+        "schedule": FETCHER_PERIOD_SEC,
+    },
 }

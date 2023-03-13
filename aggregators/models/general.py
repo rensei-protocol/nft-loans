@@ -129,3 +129,18 @@ class CollectionOffer(models.Model):
     def set_essentials(self):
         self._set_currency()
         self._set_fee()
+
+
+class Listing(models.Model):
+    marketplace = models.CharField(max_length=15, choices=MARKETPLACES)
+    listing_id = models.TextField(primary_key=True)
+    collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
+    token_id = models.CharField(max_length=50)
+    borrower = models.CharField(max_length=44)
+    listed_at = models.DateTimeField()
+    desired_terms = JSONField()
+    borrower_stats = JSONField()
+    vaulted_items = JSONField(null=True, blank=True)
+    immutable_collection = models.CharField(max_length=44, null=True, blank=True)
+    immutable_token_id = models.CharField(max_length=44, null=True, blank=True)
+    token_data = JSONField(null=True, blank=True)
